@@ -23,7 +23,10 @@ docker-compose up -d
 ## После запуска:
 
 Приложение: http://localhost:8080
+![check_site](./images/check_site.png)
 
 Prometheus: http://localhost:9090
 
 Grafana: http://localhost:3000 (логин: admin / admin)
+![grafana_dashboards](./images/grafana_dashboards.png)
+
