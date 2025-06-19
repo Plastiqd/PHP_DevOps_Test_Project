@@ -1,0 +1,58 @@
+- name: Установка Docker, Git, запуск проекта
+  hosts: all
+  become: yes
+  vars:
+    docker_packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    docker_gpg_key: https://download.docker.com/linux/ubuntu/gpg
+    docker_repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    project_git_repo: "https://github.com/Plastiqd/PHP_DevOps_Test_Project.git"
+    project_path: "/opt/my_project"
+    docker_compose_path: "{{ project_path }}/task1_2"
+    project_branch: "main"
+
+  tasks:
+  - name: Install Docker dependencies
+    ansible.builtin.apt:
+      name: "{{ docker_packages }}"
+      state: present
+      update_cache: yes
+
+  - name: Add Docker GPG key
+    ansible.builtin.apt_key:
+      url: "{{ docker_gpg_key }}"
+      state: present
+
+  - name: Add Docker repository
+    ansible.builtin.apt_repository:
+      repo: "{{ docker_repo }}"
+      state: present
+
+  - name: Install Docker
+    ansible.builtin.apt:
+      name: docker-ce
+      state: present
+
+  - name: Install Docker Compose
+    ansible.builtin.apt:
+      name: docker-compose-plugin
+      state: present
+
+  - name: Install Git
+    ansible.builtin.apt:
+      name: git
+      state: present
+
+  - name: Clone project from Git
+    ansible.builtin.git:
+      repo: "{{ project_git_repo }}"
+      dest: "{{ project_path }}"
+      version: "{{ project_branch }}"
+
+  - name: Run docker-compose
+    ansible.builtin.command: docker compose up -d
+    args:
+      chdir: "{{ docker_compose_path }}"
